@@ -1,0 +1,67 @@
+HELM NODE-JS APP NOTES
+=======================
+
+1) Create Helm Chart
+---------------------
+
+helm create node-js-app
+
+If you want to edit the chart name or metadata:
+Edit:
+vim node-js-app/Chart.yaml
+
+
+2) Edit Service Port in Templates
+----------------------------------
+
+File:
+node-js-app/templates/service.yaml
+
+Change:
+
+From:
+  targetPort: http
+
+To:
+  targetPort: {{ .Values.service.targetPort }}
+
+
+3) Modify values.yaml
+---------------------
+
+File:
+node-js-app/values.yaml
+
+Update the following values:
+
+replicaCount: <your value>
+
+image:
+  repository: ramachandrampm/node-app
+  tag: "latest"
+
+service:
+  port: 8000
+  targetPort: 8000
+
+
+4) Package the Helm Chart
+--------------------------
+
+helm package node-js-app
+
+This creates:
+node-js-app-<version>.tgz
+
+
+5) Install Helm Chart
+----------------------
+
+helm install dev-node-js-app ./node-js-app -n dev-node --create-namespace
+
+
+6) Uninstall Helm Release
+--------------------------
+
+helm uninstall dev-node-js-app -n dev-node
+
