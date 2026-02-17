@@ -1,0 +1,19 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: myjob
+  namespace: nginx
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    metadata: 
+      name: busyboxcont
+      labels: 
+        app: busy-box
+    spec:
+      containers:
+      - name: busy-box
+        image: busybox:latest
+        command: ["sh","-c","echo hello dosto! && sleep 10"]
+      restartPolicy: Never
