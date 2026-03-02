@@ -1,0 +1,50 @@
+FORCE DELETE STUCK KUBERNETES NAMESPACE (e.g., dev)
+
+When a namespace is stuck in ‘Terminating’ state due to finalizers,
+follow these steps carefully.
+
+  -------------------------------
+  STEP 1: Export Namespace JSON
+  -------------------------------
+
+kubectl get namespace dev -o json > dev.json
+
+  ----------------------------
+  STEP 2: Edit the JSON File
+  ----------------------------
+
+Open the file:
+
+nano dev.json
+
+Find this section:
+
+“spec”: { “finalizers”: [ “kubernetes” ] }
+
+Replace it with:
+
+“spec”: { “finalizers”: [] }
+
+Save and exit the file.
+
+  ----------------------------------
+  STEP 3: Force Finalize Namespace
+  ----------------------------------
+
+kubectl replace –raw “/api/v1/namespaces/dev/finalize” -f dev.json
+
+  -------------------------
+  STEP 4: Verify Deletion
+  -------------------------
+
+kubectl get ns
+
+If successful, the namespace ‘dev’ should disappear immediately.
+
+  -----------------
+  IMPORTANT NOTES
+  -----------------
+
+-   Use this method only if namespace is stuck in Terminating state.
+-   This bypasses Kubernetes finalizer protection.
+-   Ensure no critical workloads are still running inside the namespace.
