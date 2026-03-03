@@ -2,7 +2,10 @@ FORCE DELETE STUCK KUBERNETES NAMESPACE (e.g., dev)
 
 When a namespace is stuck in ‘Terminating’ state due to finalizers,
 follow these steps carefully.
-
+-----------------------------------------------------------------------
+kubectl get namespace dev -o json > dev.json
+nano dev.json
+kubectl replace --raw "/api/v1/namespaces/dev/finalize" -f dev.json
   -------------------------------
   STEP 1: Export Namespace JSON
   -------------------------------
