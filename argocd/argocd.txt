@@ -1,90 +1,13 @@
-==============================
-ARGO CD COMPLETE SETUP STEPS
-==============================
-
-1) Create Argo CD Namespace
-----------------------------
-
+----------------------------------------------------------------------------------------------------------------------------
 kubectl create namespace argocd
-
-
-2) Install Argo CD
-------------------
-
+----------------------------------------------------------------------------------------------------------------------------
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
-
-3) Check Pods
--------------
-
+----------------------------------------------------------------------------------------------------------------------------
 kubectl get pods -n argocd
-
-(Wait until all pods are Running)
-
-
-4) Access Argo CD UI (Port Forward)
-------------------------------------
-
+----------------------------------------------------------------------------------------------------------------------------
 kubectl port-forward svc/argocd-server -n argocd 8080:443 --address 0.0.0.0
-
-Now open browser:
-https://<YOUR_VM_IP>:8080
-
-
-5) Get Admin Password
----------------------
-
+----------------------------------------------------------------------------------------------------------------------------
 kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
-
-Username: admin
-
-
-==============================
-CREATE APPLICATION (CLI METHOD)
-==============================
-
-6) Install Argo CD CLI (Optional)
-----------------------------------
-
-curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-
-sudo install -m 555 argocd /usr/local/bin/argocd
+----------------------------------------------------------------------------------------------------------------------------
 
 
-7) Login via CLI
-----------------
-
-argocd login <VM-IP>:8080 --username admin --password <PASSWORD> --insecure
-
-
-8) Create Application
----------------------
-
-argocd app create argocd-test \
-  --repo https://github.com/NIKHILMPM/argocd-test.git \
-  --path k8s \
-  --revision dev \
-  --dest-server https://kubernetes.default.svc \
-  --dest-namespace argocd-ns
-
-
-9) Sync Application
--------------------
-
-argocd app sync argocd-test
-
-
-10) Verify Deployment
----------------------
-
-kubectl get pods -n argocd-ns
-kubectl get svc -n argocd-ns
-
-
-Access App:
-http://<VM-IP>:30007
-
-
-==============================
-DONE
-==============================
