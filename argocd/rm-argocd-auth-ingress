@@ -1,3 +1,4 @@
+{{{{{{{{{{{{{{to remove gpg auth}}}}}}}}}}}}}}}}}}}}}}}}
 -------------------------------------------------------
 kubectl patch configmap argocd-cm \
 -n argocd \
@@ -10,4 +11,11 @@ kubectl rollout restart deployment argocd-application-controller -n argocd
 kubectl delete configmap argocd-gpg-keys-cm -n argocd
 -------------------------------------------------------
 kubectl get configmap argocd-cm -n argocd -o yaml | grep gpg
+
+
 -------------------------------------------------------
+{{{{{{{{{{{{{{for vpa in argocd}}}}}}}}}}}}}}}}}}}}}}}}
+-------------------------------------------------------
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-up.sh
