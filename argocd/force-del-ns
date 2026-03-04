@@ -6,6 +6,10 @@ follow these steps carefully.
 kubectl get namespace dev -o json > dev.json
 nano dev.json
 kubectl replace --raw "/api/v1/namespaces/dev/finalize" -f dev.json
+
+kubectl get namespace argocd -o json > argocd.json
+nano argocd.json
+kubectl replace --raw "/api/v1/namespaces/argocd/finalize" -f argocd.json
   -------------------------------
   STEP 1: Export Namespace JSON
   -------------------------------
