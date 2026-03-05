@@ -1,0 +1,69 @@
+|||||||||||||||||||||||||||||||||||||||   SonarQube   |||||||||||||||||||||||||||||||||||||||||||
+-------------------------------------------------------------------------------------------------
+sudo docker run -itd --name sonarqube-server -p 9000:9000 sonarqube:lts-community
+-------------------------------------------------------------------------------------------------
+|||||||||||||||||||||||||||||||||||||||   Trivy   |||||||||||||||||||||||||||||||||||||||||||
+-------------------------------------------------------------------------------------------------
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+-------------------------------------------------------------------------------------------------
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+-------------------------------------------------------------------------------------------------
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | \
+sudo tee /etc/apt/sources.list.d/trivy.list
+-------------------------------------------------------------------------------------------------
+sudo apt-get update
+-------------------------------------------------------------------------------------------------
+sudo apt-get install trivy -y
+
+|||||||||||||||||||||||||||||||||||||||   Jenkins-file   |||||||||||||||||||||||||||||||||||||||||||
+pipeline {
+    agent any
+    
+    environment {
+        SONAR_HOME = tool "sonar"
+    }
+    
+    stages {
+        
+        stage('Checkout GitHub Repo') {
+            steps {
+                git url: "https://github.com/NIKHILMPM/Wanderlust-Mega-Project.git", branch: "main"
+            }
+        }
+        
+        stage('SonarQube Code Analysis') {
+            steps {
+                withSonarQubeEnv('Sonar') {
+                    sh """
+                    $SONAR_HOME/bin/sonar-scanner \
+                    -Dsonar.projectName=wanderlust \
+                    -Dsonar.projectKey=wanderlust
+                    """
+                }
+            }
+        }
+        
+        stage("Pipeline Dependency Check") {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dc'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage("Sonar quality gate test") {
+            steps {
+                timeout(time: 2, unit: "MINUTES"){
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+        
+        stage("Trivy Filesystem Scan") {
+            steps {
+                sh "trivy fs --format table -o trivy-fs-report.txt ."
+            }
+        }
+    }
+}
