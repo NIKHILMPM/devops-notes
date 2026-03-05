@@ -38,3 +38,5 @@ sudo lsof -i :3000
 kill <PID>
 
 ------------------------------------------------------------------------------------
+kubectl patch svc monitoring-kube-prometheus-prometheus -n monitoring \
+  -p '{"spec": {"type": "ClusterIP"}}'
