@@ -1,0 +1,21 @@
+************************************************ Ingress-controller ***************************************************
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+************************************************ Metrics_server *******************************************************
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+-----------------------------------------------------------------------------------------------------------------------
+kubectl -n kube-system edit deployment metrics-server
+_______________________________________________________________________
+| - --kubelet-insecure-tls                                            |
+| - --kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP  |
+_______________________________________________________________________
+-----------------------------------------------------------------------------------------------------------------------
+kubectl -n kube-system rollout restart deployment metrics-server
+-----------------------------------------------------------------------------------------------------------------------
+kubectl get pods -n kube-system
+kubectl top nodes
+************************************************ VPA-setup ************************************************************
+git clone https://github.com/kubernetes/autoscaler.git
+cd autoscaler/vertical-pod-autoscaler
+./hack/vpa-up.sh
+-----------------------------------------------------------------------------------------------------------------------
+kubectl get pods -n kube-system
