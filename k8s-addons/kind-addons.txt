@@ -5,8 +5,8 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 kubectl -n kube-system edit deployment metrics-server
 _______________________________________________________________________
-| - --kubelet-insecure-tls                                            |
-| - --kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP  |
+ - --kubelet-insecure-tls                                            
+ - --kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP  
 _______________________________________________________________________
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 kubectl -n kube-system rollout restart deployment metrics-server
