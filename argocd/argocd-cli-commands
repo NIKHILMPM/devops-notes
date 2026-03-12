@@ -1,0 +1,10 @@
+argocd app create my-app \
+--repo https://github.com/NIKHILMPM/practice-argocd.git \
+--path k8s \
+--revision main \
+--dest-server https://172.22.0.4:6443 \
+--dest-namespace apache-ns \
+--sync-policy automated \
+--self-heal \
+--auto-prune \
+--sync-option CreateNamespace=true
