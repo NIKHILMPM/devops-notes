@@ -1,0 +1,6 @@
+kind get kubeconfig --name argocd-cluster > ~/.kube/config
+
+kind export kubeconfig --name argocd-cluster
+
+kubectl config use-context kind-argocd-cluster
+kubectl get nodes
